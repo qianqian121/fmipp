@@ -79,6 +79,17 @@ if ( SWIG_FOUND )
       swig_add_module( ${FMIPP_WRAP_PYTHON_MODULE} python libfmippim.i )
       set_target_properties( ${SWIG_MODULE_${FMIPP_WRAP_PYTHON_MODULE}_REAL_NAME} PROPERTIES OUTPUT_NAME "_fmippim" )
       swig_link_libraries( ${FMIPP_WRAP_PYTHON_MODULE} fmippim ${PYTHON_LIBRARIES} )
+
+
+	  set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in")
+	  set(SETUP_PY    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+	  set(DEPS        "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py")
+
+	  configure_file(${SETUP_PY_IN} ${SETUP_PY})
+
+
+      install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install)")
+      
    endif()
 
    if ( BUILD_SWIG_JAVA )
