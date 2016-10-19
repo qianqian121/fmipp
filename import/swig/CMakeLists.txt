@@ -72,24 +72,26 @@ if ( SWIG_FOUND )
       find_package( PythonInterp REQUIRED )
       find_package( PythonLibs REQUIRED )
       include_directories( ${PYTHON_INCLUDE_DIRS} )
+	  set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/fmipp)
 
       set( FMIPP_WRAP_PYTHON_MODULE "fmippim_wrap_python" )
       # change the output name of the python dynamic library to _fmippim, otherwise pyhton does not find it when importing...
 
       swig_add_module( ${FMIPP_WRAP_PYTHON_MODULE} python libfmippim.i )
-      set_target_properties( ${SWIG_MODULE_${FMIPP_WRAP_PYTHON_MODULE}_REAL_NAME} PROPERTIES OUTPUT_NAME "_fmippim" )
+	  set_target_properties( ${SWIG_MODULE_${FMIPP_WRAP_PYTHON_MODULE}_REAL_NAME} PROPERTIES OUTPUT_NAME "fmipp/_fmippim" )
       swig_link_libraries( ${FMIPP_WRAP_PYTHON_MODULE} fmippim ${PYTHON_LIBRARIES} )
 
 
 	  set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in")
 	  set(SETUP_PY    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 	  set(DEPS        "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py")
-	  set(OUTPUT   	  "${CMAKE_CURRENT_BINARY_DIR}")
+	  set(OUTPUT   	  "${CMAKE_CURRENT_BINARY_DIR}/fmipp/__init__.py")
 
 	  configure_file(${SETUP_PY_IN} ${SETUP_PY})
 
 	  add_custom_command(OUTPUT ${OUTPUT}
-			  COMMAND ${PYTHON} ${SETUP_PY} build
+			  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build
+			  COMMAND ${CMAKE_COMMAND} -E touch ${OUTPUT}
 			  DEPENDS ${DEPS})
 	  add_custom_target(target ALL DEPENDS ${OUTPUT})
 
